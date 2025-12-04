@@ -38,42 +38,38 @@ document.getElementById("home").addEventListener("click", function() {
 
 
 
-const form = document.getElementById("projectForm");
-const list = document.getElementById("projectList");
+document.getElementById("projectForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // stop halaman refresh
 
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+    const name = document.getElementById("projectName").value;
+    const desc = document.getElementById("description").value;
+    const imageInput = document.getElementById("projectImage");
 
-  const name = document.getElementById("projectName").value;
-  const desc = document.getElementById("description").value;
-  const imgFile = document.getElementById("projectImage").files[0];
+    if (imageInput.files.length === 0) {
+        alert("Upload gambar dulu!");
+        return;
+    }
 
-  if (!imgFile) {
-    alert("Upload gambar dulu!");
-    return;
-  }
+    const imageFile = imageInput.files[0];
+    const reader = new FileReader();
 
-  const imgURL = URL.createObjectURL(imgFile);
-
-  const card = document.createElement("div");
-  card.classList.add("col-md-4");
-
-  card.innerHTML = `
-    <div class="card shadow-sm">
-      <img src="${imgURL}" class="card-img-top">
-      <div class="card-body">
-        <h5 class="fw-bold">${name}</h5>
-        <p class="text-secondary small">${desc}</p>
-        <div class="d-flex justify-content-between">
-          <button class="btn btn-dark-round btn-sm text-white">Edit</button>
-          <button class="btn btn-danger btn-sm">Delete</button>
+    reader.onload = function (event) {
+        const newCard = `
+        <div class="col-md-4 mt-3">
+            <div class="card shadow-sm project-card">
+                <img src="${event.target.result}" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="fw-bold">${name}</h5>
+                    <p class="text-secondary small">${desc}</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  `;
+        `;
 
-  list.appendChild(card);
-  form.reset();
+        document.getElementById("projectList").insertAdjacentHTML("beforeend", newCard);
+    };
+
+    reader.readAsDataURL(imageFile);
+    document.getElementById("projectForm").reset();
 });
-
 
